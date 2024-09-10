@@ -9,3 +9,7 @@ def health(request):
     except User.DoesNotExist:
         user = None
     return HttpResponse(user)
+
+
+def index(request):
+    return render(request, 'main/index.html')
