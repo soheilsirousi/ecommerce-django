@@ -10,16 +10,40 @@ class Category(AbstractModel):
         verbose_name = _("category")
         verbose_name_plural = _("categories")
 
+    def __str__(self):
+        return self.name
+
 
 class Product(AbstractModel):
+    PERCENTAGE = 1
+    CONSTANT = 2
+
+    types = (
+        (PERCENTAGE, _('Percentage')),
+        (CONSTANT, _('Constant')),
+    )
+
     name = models.CharField(max_length=100, unique=True, null=False, blank=False, verbose_name=_('product'))
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=False, blank=False, related_name='products')
     price = models.PositiveBigIntegerField(verbose_name=_('price'), null=False, blank=False)
     info = models.TextField(verbose_name=_('info'), null=False, blank=False)
+    has_discount = models.BooleanField(verbose_name=_('has discount'), default=False)
+    discount_type = models.PositiveSmallIntegerField(
+        choices=types, default=CONSTANT, verbose_name=_('discount type'))
+    discount_amount = models.PositiveBigIntegerField(verbose_name=_('discount amount'), default=0)
 
     class Meta:
         verbose_name = _("product")
         verbose_name_plural = _("products")
+
+    def __str__(self):
+        return self.name
+
+    def get_first_image_url(self):
+        image = self.images.first()
+        if image:
+            return image.image.url
+        return None
 
 
 class ProductImage(AbstractModel):
@@ -30,6 +54,9 @@ class ProductImage(AbstractModel):
         verbose_name = _("product image")
         verbose_name_plural = _("product images")
 
+    def __str__(self):
+        return self.product.name
+
 
 class ProductAttribute(AbstractModel):
     name = models.CharField(verbose_name=_('name'), max_length=100, null=False, blank=False)
@@ -37,6 +64,9 @@ class ProductAttribute(AbstractModel):
     class Meta:
         verbose_name = _("product attribute")
         verbose_name_plural = _("product attributes")
+
+    def __str__(self):
+        return self.name
 
 
 class ProductAttributeValue(AbstractModel):
@@ -47,6 +77,9 @@ class ProductAttributeValue(AbstractModel):
     class Meta:
         verbose_name = _('product attribute value')
         verbose_name_plural = _('product attributes values')
+
+    def __str__(self):
+        return self.value
 
 
 class Comment(AbstractModel):

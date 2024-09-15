@@ -5,7 +5,6 @@ from django.utils.translation import gettext_lazy as _
 from store.models import Product
 from utils.models import AbstractModel
 
-
 class Cart(AbstractModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='carts', verbose_name=_('user'))
     is_paid = models.BooleanField(default=False, verbose_name=_('is paid'))
